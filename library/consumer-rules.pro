@@ -4,28 +4,18 @@
 # This file is packaged inside the AAR and is applied
 # automatically to every app that depends on the library.
 #
-# The library itself is NOT obfuscated, so consumers can call
-# every helper safely out of the box. These rules exist only to
-# protect the public API if a consumer enables minification in
-# their own project: they guarantee the API they call is never
-# stripped or renamed.
+# All Kotlin classes and methods in this library can be obfuscated,
+# shrunk, and renamed normally when a consumer enables minification,
+# EXCEPT for native (NDK / JNI) methods and their enclosing classes,
+# which are preserved so C++ native engine calls do not fail at runtime.
 # ============================================================
 
-# Keep the public API surface of every helper.
--keep class com.zaitxcode.android.** {
-    public <methods>;
-    public <fields>;
+# Preserve native (NDK / JNI) methods and their enclosing classes
+# so C++ JNI symbol bindings (e.g. Java_com_zaitxcode_android_security_Encryption_...) remain intact.
+-keepclasseswithmembernames,includedescriptorclasses class com.zaitxcode.android.** {
+    native <methods>;
 }
 
-# Keep the INSTANCE field of every Kotlin singleton object.
--keepclassmembers class com.zaitxcode.android.** {
-    public static final *** INSTANCE;
-}
-
-# Keep Kotlin metadata required by reflection and interop.
--keep class kotlin.Metadata { *; }
--dontwarn kotlin.**
-
-# AndroidX FileProvider used to share generated files.
+# AndroidX FileProvider declared in the merged manifest.
 -keep class androidx.core.content.FileProvider { *; }
 -keep class androidx.core.content.FileProvider$* { *; }

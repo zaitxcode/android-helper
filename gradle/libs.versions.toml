@@ -1,7 +1,7 @@
 [versions]
 # App & Library Versions
 versionCode = "213"
-versionName = "1.0.0-beta13"
+versionName = "1.0.0-RC01"
 
 # SDK Versions
 compileSdk = "37"
@@ -26,16 +26,16 @@ lifecycle = "2.12.0-alpha04"
 composeBom = "2026.09.00"
 activityCompose = "1.14.0-alpha03"
 navigationCompose = "2.10.2"
-datastore = "1.3.0-alpha11"
+datastore = "1.3.0-rc01"
 materialIconsExtended = "1.7.8"
 
 # Miuix (Xiaomi HyperOS design)
  miuix = "0.9.4"
 
 # Plugins
-agp = "9.5.0-alpha08"
+agp = "9.4.1"
 kotlin = "2.5.0-Beta1"
-mavenPublish = "0.30.0"
+mavenPublish = "0.37.0"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }

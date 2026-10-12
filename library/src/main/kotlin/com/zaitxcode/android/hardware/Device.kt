@@ -12,17 +12,17 @@ object Device {
 
     @JvmStatic fun manufacturer(): String {
         AppHelper.checkInitialized()
-        return Build.MANUFACTURER
+        return Build.MANUFACTURER ?: ""
     }
 
     @JvmStatic fun model(): String {
         AppHelper.checkInitialized()
-        return Build.MODEL
+        return Build.MODEL ?: ""
     }
 
     @JvmStatic fun brand(): String {
         AppHelper.checkInitialized()
-        return Build.BRAND
+        return Build.BRAND ?: ""
     }
 
     @JvmStatic fun sdk(): Int {
@@ -32,18 +32,18 @@ object Device {
 
     @JvmStatic fun androidVersion(): String {
         AppHelper.checkInitialized()
-        return Build.VERSION.RELEASE
+        return Build.VERSION.RELEASE ?: ""
     }
 
     @JvmStatic fun supportedAbis(): List<String> {
         AppHelper.checkInitialized()
-        return Build.SUPPORTED_ABIS.toList()
+        return Build.SUPPORTED_ABIS?.toList() ?: emptyList()
     }
 
     @JvmStatic
     fun deviceName(): String {
         AppHelper.checkInitialized()
-        return listOf(Build.MANUFACTURER, Build.MODEL)
+        return listOfNotNull(Build.MANUFACTURER, Build.MODEL)
             .filter { it.isNotBlank() }
             .joinToString(" ")
             .trim()
@@ -71,7 +71,11 @@ object Device {
 
     @JvmStatic fun getUptimeMillis(): Long {
         AppHelper.checkInitialized()
-        return SystemClock.elapsedRealtime()
+        return try {
+            SystemClock.elapsedRealtime()
+        } catch (_: Exception) {
+            0L
+        }
     }
 
     @JvmStatic
@@ -101,12 +105,12 @@ object Device {
     @JvmStatic
     fun isEmulator(): Boolean {
         AppHelper.checkInitialized()
-        val fingerprint = Build.FINGERPRINT.lowercase(Locale.US)
-        val model = Build.MODEL.lowercase(Locale.US)
-        val manufacturer = Build.MANUFACTURER.lowercase(Locale.US)
-        val brand = Build.BRAND.lowercase(Locale.US)
-        val device = Build.DEVICE.lowercase(Locale.US)
-        val product = Build.PRODUCT.lowercase(Locale.US)
+        val fingerprint = (Build.FINGERPRINT ?: "").lowercase(Locale.US)
+        val model = (Build.MODEL ?: "").lowercase(Locale.US)
+        val manufacturer = (Build.MANUFACTURER ?: "").lowercase(Locale.US)
+        val brand = (Build.BRAND ?: "").lowercase(Locale.US)
+        val device = (Build.DEVICE ?: "").lowercase(Locale.US)
+        val product = (Build.PRODUCT ?: "").lowercase(Locale.US)
 
         return fingerprint.startsWith("generic") ||
             fingerprint.contains("emulator") ||

@@ -62,8 +62,10 @@ configure<LibraryExtension> {
 group = "com.zaitxcode"
 
 mavenPublishing {
-    publishToMavenCentral(com.vanniktech.maven.publish.SonatypeHost.CENTRAL_PORTAL)
-    signAllPublications()
+    publishToMavenCentral()
+    if (project.hasProperty("signing.keyId") || project.hasProperty("signing.secretKeyRingFile")) {
+        signAllPublications()
+    }
 
     coordinates(
         groupId = "com.zaitxcode",
