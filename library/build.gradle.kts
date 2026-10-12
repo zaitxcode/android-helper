@@ -63,7 +63,14 @@ group = "com.zaitxcode"
 
 mavenPublishing {
     publishToMavenCentral()
-    if (project.hasProperty("signing.keyId") || project.hasProperty("signing.secretKeyRingFile")) {
+
+    val hasSigningKey = project.hasProperty("signing.keyId") ||
+        project.hasProperty("signingKeyId") ||
+        project.hasProperty("signing.key") ||
+        project.hasProperty("signingKey") ||
+        project.hasProperty("signing.secretKeyRingFile")
+
+    if (hasSigningKey) {
         signAllPublications()
     }
 
