@@ -1,9 +1,11 @@
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.signing
 
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.maven.publish)
+    signing
 }
 
 configure<LibraryExtension> {
@@ -61,16 +63,27 @@ configure<LibraryExtension> {
 
 group = "com.zaitxcode"
 
+val signingKey = (project.findProperty("signingKey") as? String)
+    ?: (project.findProperty("signingInMemoryKey") as? String)
+val signingKeyId = (project.findProperty("signingKeyId") as? String)
+    ?: (project.findProperty("signing.keyId") as? String)
+val signingPassword = (project.findProperty("signingPassword") as? String)
+    ?: (project.findProperty("signing.password") as? String)
+
+if (!signingKey.isNullOrBlank()) {
+    signing {
+        if (!signingKeyId.isNullOrBlank()) {
+            useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+        } else {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+        }
+    }
+}
+
 mavenPublishing {
     publishToMavenCentral()
 
-    val hasSigningKey = project.hasProperty("signing.keyId") ||
-        project.hasProperty("signingKeyId") ||
-        project.hasProperty("signing.key") ||
-        project.hasProperty("signingKey") ||
-        project.hasProperty("signing.secretKeyRingFile")
-
-    if (hasSigningKey) {
+    if (!signingKey.isNullOrBlank() || project.hasProperty("signing.keyId") || project.hasProperty("signing.secretKeyRingFile")) {
         signAllPublications()
     }
 
