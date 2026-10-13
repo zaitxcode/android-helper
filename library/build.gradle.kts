@@ -63,20 +63,23 @@ configure<LibraryExtension> {
 
 group = "com.zaitxcode"
 
-val signingKey = (project.findProperty("signingKey") as? String)
-    ?: (project.findProperty("signingInMemoryKey") as? String)
-val signingKeyId = (project.findProperty("signingKeyId") as? String)
-    ?: (project.findProperty("signing.keyId") as? String)
+val keyFile = rootProject.file(".gradle/gpg_key.asc")
+val signingKey = if (keyFile.exists()) keyFile.readText() else ((project.findProperty("signingKey") as? String)
+    ?: (project.findProperty("signingInMemoryKey") as? String))
+val signingKeyId = if (keyFile.exists()) "316FC574" else ((project.findProperty("signingKeyId") as? String)
+    ?: (project.findProperty("signing.keyId") as? String))
 val signingPassword = (project.findProperty("signingPassword") as? String)
     ?: (project.findProperty("signing.password") as? String)
 
 if (!signingKey.isNullOrBlank()) {
+    val pwd = signingPassword ?: ""
+    val kid = signingKeyId ?: ""
+
+    project.extra["signing.keyId"] = kid
+    project.extra["signing.password"] = pwd
+
     signing {
-        if (!signingKeyId.isNullOrBlank()) {
-            useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-        } else {
-            useInMemoryPgpKeys(signingKey, signingPassword)
-        }
+        useInMemoryPgpKeys(kid, signingKey, pwd)
     }
 }
 
