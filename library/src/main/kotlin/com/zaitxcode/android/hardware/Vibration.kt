@@ -18,16 +18,11 @@ object Vibration {
         val vibrator = getVibrator(context) ?: return
         if (!vibrator.hasVibrator()) return
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val effect = VibrationEffect.createOneShot(
-                ms,
-                VibrationEffect.DEFAULT_AMPLITUDE
-            )
-            vibrator.vibrate(effect)
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(ms)
-        }
+        val effect = VibrationEffect.createOneShot(
+            ms,
+            VibrationEffect.DEFAULT_AMPLITUDE
+        )
+        vibrator.vibrate(effect)
     }
 
     @JvmStatic
@@ -41,13 +36,8 @@ object Vibration {
         val vibrator = getVibrator(context) ?: return
         if (!vibrator.hasVibrator()) return
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val effect = VibrationEffect.createWaveform(pattern, repeat)
-            vibrator.vibrate(effect)
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(pattern, repeat)
-        }
+        val effect = VibrationEffect.createWaveform(pattern, repeat)
+        vibrator.vibrate(effect)
     }
 
     @JvmStatic
