@@ -126,6 +126,12 @@ object File {
     }
 
     private fun getFile(context: Context, fileName: String): File {
-        return File(context.filesDir, fileName)
+        val file = File(context.filesDir, fileName)
+        val canonicalPath = file.canonicalPath
+        val canonicalDir = context.filesDir.canonicalPath
+        if (!canonicalPath.startsWith(canonicalDir)) {
+            throw SecurityException("Path traversal attempt detected: $fileName")
+        }
+        return file
     }
 }

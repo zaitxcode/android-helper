@@ -44,8 +44,12 @@ object AppHelper {
     fun isInitialized(): Boolean = initialized || applicationContext != null || currentActivity != null
 
     @JvmStatic
-    fun initializeForTesting() {
+    @JvmOverloads
+    fun initializeForTesting(context: Context? = null) {
         initialized = true
+        if (context != null) {
+            applicationContext = context
+        }
     }
 
     @JvmStatic
