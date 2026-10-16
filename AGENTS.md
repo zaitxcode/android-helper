@@ -113,11 +113,12 @@ Keep the intent of both files: **keep class names and public members of
 - The `flutter_example` module depends on a **prebuilt `androidhelper.aar`
   committed into the repo** (`android/app/libs/`). It is a deliberate
   dependency artifact, not a cache — do not delete it. Rebuild and refresh it
-  when the library's public API changes.
+  when the library's public API changes with
+  `bash ./gradlew :library:refreshFlutterAar`.
 - The library ships a `FileProvider` (authority `"${applicationId}.provider"`)
   and its path config; file-sharing helpers depend on it.
-- `Encryption` uses AES-ECB for simple, dependency-free symmetric encryption.
-  This is a compatibility choice, not a recommendation for new sensitive use.
+- `Encryption` keeps AES-ECB only for backward compatibility. For new sensitive
+  use call `aesGcmEncrypt`/`aesGcmDecrypt` (AES-GCM with random IV and auth tag).
 - The codebase is **English-only**: all identifiers, comments, strings, and
   docs. Keep it that way.
 

@@ -133,3 +133,12 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.json:json:20231013")
 }
+
+// Refresh the prebuilt AAR consumed by flutter_example.
+// Run after public API changes: bash ./gradlew :library:refreshFlutterAar
+tasks.register<Copy>("refreshFlutterAar") {
+    dependsOn("bundleReleaseAar")
+    from(layout.buildDirectory.file("outputs/aar/library-release.aar"))
+    into(rootProject.file("flutter_example/android/app/libs"))
+    rename { "androidhelper.aar" }
+}

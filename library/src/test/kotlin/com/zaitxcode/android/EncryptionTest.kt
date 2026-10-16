@@ -67,4 +67,27 @@ class EncryptionTest {
         val decrypted = Encryption.aesDecrypt(encrypted, key)
         assertEquals(originalText, decrypted)
     }
+
+    @Test
+    fun testAesGcmEncryptionDecryption() {
+        val originalText = "Sensitive Data 67890!"
+        val key = "my_super_secret_key"
+
+        val encrypted = Encryption.aesGcmEncrypt(originalText, key)
+        assertTrue(encrypted.isNotBlank())
+        assertNotEquals(originalText, encrypted)
+
+        val decrypted = Encryption.aesGcmDecrypt(encrypted, key)
+        assertEquals(originalText, decrypted)
+    }
+
+    @Test
+    fun testAesGcmWrongKeyFails() {
+        val originalText = "Sensitive Data 67890!"
+        val encrypted = Encryption.aesGcmEncrypt(originalText, "correct_key")
+        assertTrue(encrypted.isNotBlank())
+
+        val decrypted = Encryption.aesGcmDecrypt(encrypted, "wrong_key")
+        assertEquals("", decrypted)
+    }
 }

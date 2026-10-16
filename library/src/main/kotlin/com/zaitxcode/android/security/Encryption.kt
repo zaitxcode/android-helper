@@ -3,11 +3,16 @@ package com.zaitxcode.android.security
 import android.util.Base64
 import com.zaitxcode.android.core.AppHelper
 import java.security.MessageDigest
+import java.security.SecureRandom
 import javax.crypto.Cipher
 import javax.crypto.Mac
+import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 object Encryption {
+
+    private const val GCM_IV_BYTES = 12
+    private const val GCM_TAG_BITS = 128
 
     private var isNativeLoaded = false
 
@@ -82,6 +87,12 @@ object Encryption {
         }
     }
 
+    /**
+     * Legacy compatibility encryption using AES/ECB/PKCS5Padding.
+     * ECB reveals repeated plaintext blocks and provides no integrity check.
+     * Kept for backward compatibility only. For new sensitive data use
+     * [aesGcmEncrypt] and [aesGcmDecrypt] instead.
+     */
     @JvmStatic fun aesEncrypt(text: String, secretKey: String): String {
         AppHelper.checkInitialized()
         return try {
@@ -96,6 +107,10 @@ object Encryption {
         }
     }
 
+    /**
+     * Legacy compatibility decryption for [aesEncrypt].
+     * For new sensitive data use [aesGcmDecrypt] instead.
+     */
     @JvmStatic fun aesDecrypt(encryptedText: String, secretKey: String): String {
         AppHelper.checkInitialized()
         return try {
@@ -105,6 +120,47 @@ object Encryption {
             cipher.init(Cipher.DECRYPT_MODE, keySpec)
             val decodedBytes = base64Decode(encryptedText).toByteArray(Charsets.ISO_8859_1)
             String(cipher.doFinal(decodedBytes), Charsets.UTF_8)
+        } catch (_: Exception) {
+            ""
+        }
+    }
+
+    /**
+     * Recommended symmetric encryption using AES/GCM/NoPadding with a random
+     * 12-byte IV and 128-bit auth tag. The IV is prepended to the ciphertext
+     * and the whole payload is Base64 encoded. Returns "" on failure.
+     */
+    @JvmStatic fun aesGcmEncrypt(text: String, secretKey: String): String {
+        AppHelper.checkInitialized()
+        return try {
+            val keyBytes = MessageDigest.getInstance("SHA-256").digest(secretKey.toByteArray(Charsets.UTF_8))
+            val keySpec = SecretKeySpec(keyBytes, "AES")
+            val iv = ByteArray(GCM_IV_BYTES).also { SecureRandom().nextBytes(it) }
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.ENCRYPT_MODE, keySpec, GCMParameterSpec(GCM_TAG_BITS, iv))
+            val encrypted = cipher.doFinal(text.toByteArray(Charsets.UTF_8))
+            encodeBytes(iv + encrypted)
+        } catch (_: Exception) {
+            ""
+        }
+    }
+
+    /**
+     * Decrypts payloads produced by [aesGcmEncrypt]. Returns "" on failure,
+     * including authentication failures when key or data was tampered with.
+     */
+    @JvmStatic fun aesGcmDecrypt(encryptedText: String, secretKey: String): String {
+        AppHelper.checkInitialized()
+        return try {
+            val combined = decodeBytes(encryptedText) ?: return ""
+            if (combined.size <= GCM_IV_BYTES) return ""
+            val iv = combined.copyOfRange(0, GCM_IV_BYTES)
+            val cipherText = combined.copyOfRange(GCM_IV_BYTES, combined.size)
+            val keyBytes = MessageDigest.getInstance("SHA-256").digest(secretKey.toByteArray(Charsets.UTF_8))
+            val keySpec = SecretKeySpec(keyBytes, "AES")
+            val cipher = Cipher.getInstance("AES/GCM/NoPadding")
+            cipher.init(Cipher.DECRYPT_MODE, keySpec, GCMParameterSpec(GCM_TAG_BITS, iv))
+            String(cipher.doFinal(cipherText), Charsets.UTF_8)
         } catch (_: Exception) {
             ""
         }
@@ -182,5 +238,25 @@ object Encryption {
             sb.append(String.format("%02x", b))
         }
         return sb.toString()
+    }
+
+    private fun encodeBytes(bytes: ByteArray): String {
+        return try {
+            Base64.encodeToString(bytes, Base64.NO_WRAP)
+        } catch (_: Throwable) {
+            java.util.Base64.getEncoder().encodeToString(bytes)
+        }
+    }
+
+    private fun decodeBytes(encodedText: String): ByteArray? {
+        return try {
+            Base64.decode(encodedText, Base64.NO_WRAP)
+        } catch (_: Throwable) {
+            try {
+                java.util.Base64.getDecoder().decode(encodedText)
+            } catch (_: Exception) {
+                null
+            }
+        }
     }
 }

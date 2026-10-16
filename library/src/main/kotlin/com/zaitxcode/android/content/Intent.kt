@@ -8,6 +8,11 @@ import com.zaitxcode.android.core.AppHelper
 import com.zaitxcode.android.browser.Browser
 
 object Intent {
+    // Name intentionally shadows android.content.Intent.
+    // In Kotlin prefer an alias to avoid confusion:
+    // import com.zaitxcode.android.content.Intent as HelperIntent
+    // In Java use the fully qualified name:
+    // com.zaitxcode.android.content.Intent.openWhatsApp(...)
 
     @JvmStatic
     @JvmOverloads

@@ -1,6 +1,6 @@
 # Android Helper Flutter Integration Example
 
-This example demonstrates how to integrate the **Android Helper** library (v1.0.0-beta07) into a Flutter application using a native Kotlin `MethodChannel` bridge.
+This example demonstrates how to integrate the **Android Helper** library (v1.0.0-RC01) into a Flutter application using a native Kotlin `MethodChannel` bridge.
 
 ---
 

@@ -5,6 +5,12 @@ import com.zaitxcode.android.core.AppHelper
 import java.io.File
 
 object File {
+    // Name intentionally shadows java.io.File. This helper operates only
+    // inside the app filesDir with path-traversal protection.
+    // In Kotlin prefer an alias to avoid confusion:
+    // import com.zaitxcode.android.io.File as HelperFile
+    // In Java use the fully qualified name:
+    // com.zaitxcode.android.io.File.writeText(...)
 
     @JvmStatic @JvmOverloads fun writeText(fileName: String, text: String, context: Context = AppHelper.ctx()): Boolean {
         AppHelper.checkInitialized()
