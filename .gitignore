@@ -1,6 +1,7 @@
 # Gradle files
 .gradle/
 .kotlin/
+.wrangler/
 build/
 captures/
 **/local.properties
