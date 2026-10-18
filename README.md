@@ -2,18 +2,33 @@
 ![AndroidX](https://img.shields.io/badge/AndroidX-Required-blue)
 ![Kotlin](https://img.shields.io/badge/Kotlin-First-purple)
 ![C++ Engine](https://img.shields.io/badge/C++%20NDK-libandroidhelper.so-blueviolet)
+![Rust Engine](https://img.shields.io/badge/Rust%20Engine-libandroidhelper__rust.so-red)
+![Expo / React Native](https://img.shields.io/badge/Expo-React%20Native-blue)
 ![WebBridge](https://img.shields.io/badge/Web-WebBridge-success)
 ![Platform](https://img.shields.io/badge/Platform-Android-green)
 ![Release](https://img.shields.io/badge/Release-orange)
 
 # Android Helper
 
-> Enterprise-grade, clean Android & Flutter utility library under `com.zaitxcode.android.*` backed by a high-performance C++ Native Engine (`libandroidhelper.so`) and native WebBridge.
+> Enterprise-grade, clean Android, Flutter, Expo & React Native utility library under `com.zaitxcode.android.*` backed by high-performance C++ & Rust Native Engines (`libandroidhelper.so`, `libandroidhelper_rust.so`) and native WebBridge.
 
-Android Helper provides clean Android category helpers — Network, Audio, Vibration, Display, Biometrics, Secure Intents, Clipboard, Notifications, File Management, Device/Battery info, Cryptography, and WebBridge.
+Android Helper provides clean Android category helpers — Network, Audio, Vibration, Sensors, Download, Display, Biometrics, Secure Intents, Clipboard, Notifications, File Management, Device/Battery info, Cryptography (AES-GCM, Rust SHA-3, ChaCha20), WindowInsets Edge-To-Edge, and WebBridge.
 
 🌐 **Documentation:** [docs.zaitxcode.com/androidhelper](https://docs.zaitxcode.com/androidhelper)  
 🌐 **Live GitHub Pages Web Demo:** [zaitxcode.github.io/androidhelper](https://zaitxcode.github.io/androidhelper/)
+
+---
+
+## 🛠️ Technologies & Languages Used
+
+| Category | Technologies & Tools |
+|---|---|
+| **Languages** | **Kotlin**, **Java**, **C++ (NDK)**, **Rust**, **Dart (Flutter)**, **TypeScript**, **JavaScript**, **HTML5 / CSS3** |
+| **Android Frameworks** | Android SDK 37 (Android 16/17, Min SDK 26), Jetpack Compose, Material 3, Miuix UI (Xiaomi HyperOS Design), AndroidX Core, Custom Tabs, FileProvider |
+| **Native Engines** | **C++ NDK Engine** (`libandroidhelper.so` via CMake 3.22) & **Rust Engine** (`libandroidhelper_rust.so` via Cargo C-ABI) |
+| **Cross-Platform Bridges** | **Flutter** (MethodChannel `androidhelper/core`), **Expo 52 / React Native 0.76** (`ReactContextBaseJavaModule`), **WebBridge** (`JavascriptInterface`) |
+| **Asynchronous & Cryptography** | Kotlin Coroutines & Flow, AES-256, AES-GCM (IV + Auth Tag), HMAC-SHA256, SHA-3, ChaCha20, CRC32 |
+| **Build & DevOps Platforms** | Gradle 9.6.0 (Kotlin DSL), Cargo, Maven Central (Sonatype Portal), GitHub Actions, Cloudflare Pages & Cloudflare R2 Remote Storage |
 
 ---
 
@@ -23,7 +38,7 @@ Android Helper provides clean Android category helpers — Network, Audio, Vibra
 
 ```toml
 [versions]
-androidHelper = "1.0.0"
+androidHelper = "1.1.0-alpha01"
 
 [libraries]
 androidhelper = { group = "com.zaitxcode", name = "androidhelper", version.ref = "androidHelper" }

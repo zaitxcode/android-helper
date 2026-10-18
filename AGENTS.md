@@ -29,6 +29,7 @@ The codebase is English-only by policy.
 | `app` | Kotlin demo app (Jetpack Compose & Miuix Material3). Exercises every helper. |
 | `java_app` | Pure-Java demo app (Views/XML). Proves Java interop. |
 | `flutter_example` | Flutter demo that bridges to the library via a MethodChannel (`androidhelper/core`). |
+| `expo_example` | Expo / React Native demo app with native Kotlin bridge module (`AndroidHelperModule.kt`). |
 | `packages/web` | Web & TS helper package (`@zaitxcode/web-helper`) for WebBridge integration. |
 | `web_demo` | Standalone interactive HTML/JS WebBridge demo page. |
 
@@ -105,6 +106,14 @@ androidhelper/
 │       └── app/src/main/kotlin/com/zaitxcode/android/apps/flutterapphelper/
 │           ├── MainActivity.kt        # MethodChannel handler ("androidhelper/core")
 │           └── MyApp.kt               # Application class initializing AppHelper
+├── expo_example/                      # Expo / React Native Demo Application
+│   ├── package.json                   # Expo 52 & React Native 0.76 configuration
+│   ├── app.json                       # Expo app configuration
+│   ├── App.tsx                        # React Native UI exercising Android Helper natively
+│   └── android/                       # Native Android Module
+│       └── app/src/main/kotlin/com/zaitxcode/android/apps/expoapphelper/
+│           ├── AndroidHelperModule.kt # ReactContextBaseJavaModule bridging com.zaitxcode.android.*
+│           └── AndroidHelperPackage.kt# ReactPackage registration
 ├── packages/web/                      # Web & TS Helper Package (@zaitxcode/web-helper)
 │   ├── package.json
 │   └── src/
@@ -117,6 +126,7 @@ androidhelper/
 The following changes have been implemented and verified across the project:
 
 - **Release `1.1.0-alpha01`**: Published to Maven Central (`com.zaitxcode:androidhelper:1.1.0-alpha01`) and tagged on GitHub.
+- **Expo & React Native Integration (`expo_example`)**: Added full Expo 52 / React Native 0.76 demo module with native Kotlin `ReactContextBaseJavaModule` (`AndroidHelperModule.kt`).
 - **Kotlin 2.5.0-Beta1 & Java 21**: Upgraded to Kotlin `2.5.0-Beta1` and Java 21 toolchain across all Gradle modules.
 - **Native Rust Engine (`libandroidhelper_rust.so`)**: Added Rust crate in `library/src/main/rust/` with `security.RustEngine` for Rust SHA-3 hashing and ChaCha20 encryption.
 - **Native C++ NDK Engine Extensions**: Expanded `androidhelper.cpp` to include native CRC32 hashing.
