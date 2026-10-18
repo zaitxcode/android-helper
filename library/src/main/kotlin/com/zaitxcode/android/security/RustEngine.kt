@@ -31,6 +31,14 @@ object RustEngine {
     private external fun nativeRustSha3(text: String): String
 
     @JvmStatic
+    @Suppress("KotlinJniMissingFunction")
+    private external fun nativeRustKeccak256(text: String): String
+
+    @JvmStatic
+    @Suppress("KotlinJniMissingFunction")
+    private external fun nativeRustChaCha20Encrypt(text: String, key: String): String
+
+    @JvmStatic
     fun sha3(text: String): String {
         AppHelper.checkInitialized()
         if (isRustLoaded) {
@@ -51,5 +59,31 @@ object RustEngine {
         } catch (_: Exception) {
             Encryption.sha256(text)
         }
+    }
+
+    @JvmStatic
+    fun keccak256(text: String): String {
+        AppHelper.checkInitialized()
+        if (isRustLoaded) {
+            try {
+                return nativeRustKeccak256(text)
+            } catch (_: Throwable) {
+                // Fallback
+            }
+        }
+        return Encryption.sha256(text)
+    }
+
+    @JvmStatic
+    fun chacha20Encrypt(text: String, key: String): String {
+        AppHelper.checkInitialized()
+        if (isRustLoaded) {
+            try {
+                return nativeRustChaCha20Encrypt(text, key)
+            } catch (_: Throwable) {
+                // Fallback
+            }
+        }
+        return CryptoGcm.aesGcmEncrypt(text, key)
     }
 }
