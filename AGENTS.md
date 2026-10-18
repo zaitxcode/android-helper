@@ -112,6 +112,10 @@ androidhelper/
 │       └── app/src/main/kotlin/com/zaitxcode/android/apps/expoapphelper/
 │           ├── AndroidHelperModule.kt # ReactContextBaseJavaModule bridging com.zaitxcode.android.*
 │           └── AndroidHelperPackage.kt# ReactPackage registration
+└── rust_app/                          # Rust Engine Android Demo Application
+    └── android/app/src/main/kotlin/com/zaitxcode/android/apps/rustapphelper/
+        ├── MainActivity.kt            # Android UI displaying Rust SHA-3 & Engine status
+        └── MainApplication.kt         # Application initializer
 ```
 
 ## Recent Changes & History Log
