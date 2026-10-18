@@ -535,6 +535,20 @@ public class MainActivity extends AppCompatActivity {
         Screen.unblockCapture(this);
         appendOutput("\n=== Screen ===");
         appendOutput("Screen capture unblocked");
+        testNewHelpers();
+    }
+
+    private void testNewHelpers() {
+        appendOutput("\n=== New Helpers 1.1.0-alpha01 ===");
+        appendOutput("OEM Skin: " + com.zaitxcode.android.hardware.DeviceUI.getOemSkinName());
+        appendOutput("Is HyperOS: " + com.zaitxcode.android.hardware.DeviceUI.isHyperOS());
+        appendOutput("Is ColorOS: " + com.zaitxcode.android.hardware.DeviceUI.isColorOS());
+        appendOutput("Is One UI: " + com.zaitxcode.android.hardware.DeviceUI.isOneUI());
+        appendOutput("Is Custom ROM: " + com.zaitxcode.android.hardware.DeviceUI.isCustomRom());
+        appendOutput("Sensors Ambient Light: " + com.zaitxcode.android.hardware.Sensors.getAmbientLightLux() + " Lux");
+        appendOutput("Rust Engine Available: " + com.zaitxcode.android.security.RustEngine.isAvailable());
+        appendOutput("Rust SHA-3: " + com.zaitxcode.android.security.RustEngine.sha3(currentInput()));
+        appendOutput("AES-GCM Encrypted: " + com.zaitxcode.android.security.CryptoGcm.aesGcmEncrypt(currentInput(), "secret123"));
     }
 
     // ==================== Helpers ====================

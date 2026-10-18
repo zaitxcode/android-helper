@@ -397,6 +397,70 @@ private fun Material3HomeScreen(
                 }
             }
 
+            SectionTitle("🎨 Device UI, OEM Skins & Rust Engine")
+            M3CardContainer {
+                M3Item("OEM Skin / Custom ROM Name") {
+                    onShowResult(
+                        "Device UI & OEM Skins",
+                        "OEM Skin=${com.zaitxcode.android.hardware.DeviceUI.getOemSkinName()}\n" +
+                            "HyperOS=${com.zaitxcode.android.hardware.DeviceUI.isHyperOS()}\n" +
+                            "MIUI=${com.zaitxcode.android.hardware.DeviceUI.isMiui()}\n" +
+                            "ColorOS=${com.zaitxcode.android.hardware.DeviceUI.isColorOS()}\n" +
+                            "One UI=${com.zaitxcode.android.hardware.DeviceUI.isOneUI()}\n" +
+                            "OriginOS=${com.zaitxcode.android.hardware.DeviceUI.isOriginOS()}\n" +
+                            "EMUI=${com.zaitxcode.android.hardware.DeviceUI.isEMUI()}\n" +
+                            "Custom ROM=${com.zaitxcode.android.hardware.DeviceUI.isCustomRom()} (${com.zaitxcode.android.hardware.DeviceUI.getCustomRomName()})"
+                    )
+                }
+                M3Item("Open OEM Autostart Settings") {
+                    com.zaitxcode.android.hardware.DeviceUI.openOemAutostartSettings(context)
+                }
+                M3Item("Hardware Sensors Info") {
+                    onShowResult(
+                        "Sensors Info",
+                        "Accelerometer=${com.zaitxcode.android.hardware.Sensors.isAccelerometerAvailable()}\n" +
+                            "Gyroscope=${com.zaitxcode.android.hardware.Sensors.isGyroscopeAvailable()}\n" +
+                            "Barometer=${com.zaitxcode.android.hardware.Sensors.isBarometerAvailable()}\n" +
+                            "Step Counter=${com.zaitxcode.android.hardware.Sensors.isStepCounterAvailable()}\n" +
+                            "Ambient Light=${com.zaitxcode.android.hardware.Sensors.getAmbientLightLux()} Lux"
+                    )
+                }
+                M3Item("Rust Native Engine Crypto") {
+                    val text = inputText.ifBlank { "Hello Rust Engine" }
+                    val key = "my_rust_key"
+                    onShowResult(
+                        "Rust Engine",
+                        "Rust Available=${com.zaitxcode.android.security.RustEngine.isAvailable()}\n" +
+                            "Rust SHA3-256=${com.zaitxcode.android.security.RustEngine.sha3(text)}\n" +
+                            "Rust Keccak-256=${com.zaitxcode.android.security.RustEngine.keccak256(text)}\n" +
+                            "Rust ChaCha20Enc=${com.zaitxcode.android.security.RustEngine.chacha20Encrypt(text, key)}"
+                    )
+                }
+                M3Item("AES-GCM Authenticated Crypto") {
+                    val text = inputText.ifBlank { "Hello AES-GCM" }
+                    val secret = "myGcmKey123"
+                    val enc = com.zaitxcode.android.security.CryptoGcm.aesGcmEncrypt(text, secret)
+                    val dec = com.zaitxcode.android.security.CryptoGcm.aesGcmDecrypt(enc, secret)
+                    onShowResult("AES-GCM", "Encrypted=$enc\nDecrypted=$dec")
+                }
+                M3Item("System Download Manager Test") {
+                    val id = com.zaitxcode.android.io.Download.enqueue(
+                        url = "https://storage.zaitxcode.com/android/androidhelper-example-kotlin.apk",
+                        fileName = "androidhelper-demo.apk",
+                        title = "Downloading Demo APK",
+                        context = context
+                    )
+                    onShowResult("Download Enqueued", "Download ID=$id\nStatus=${com.zaitxcode.android.io.Download.getStatus(id, context)}")
+                }
+                M3Item("WindowInsets & Edge-to-Edge") {
+                    onShowResult(
+                        "WindowInsets",
+                        "Status Bar DP=${com.zaitxcode.android.view.WindowInsetsHelper.getStatusBarHeightDp(context)}\n" +
+                            "Nav Bar DP=${com.zaitxcode.android.view.WindowInsetsHelper.getNavigationBarHeightDp(context)}"
+                    )
+                }
+            }
+
             SectionTitle(stringResource(R.string.section_security))
             M3CardContainer {
                 M3Item(stringResource(R.string.action_signatures)) {
