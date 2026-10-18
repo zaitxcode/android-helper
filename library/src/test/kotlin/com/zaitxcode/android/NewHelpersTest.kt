@@ -52,6 +52,8 @@ class NewHelpersTest {
         assertNotNull(DeviceUI.getOemSkinName())
         assertNotNull(DeviceUI.isHyperOS())
         assertNotNull(DeviceUI.isMiui())
+        assertNotNull(DeviceUI.isHyperOSOptimizationEnabled())
+        assertNotNull(DeviceUI.getHyperOSBuildCode())
         assertNotNull(DeviceUI.isColorOS())
         assertNotNull(DeviceUI.isOxygenOS())
         assertNotNull(DeviceUI.isRealmeUI())

@@ -30,9 +30,9 @@ enum class DarkMode {
 }
 
 data class AppSettings(
-    val themeMode: ThemeMode = ThemeMode.MATERIAL3,
+    val themeMode: ThemeMode = ThemeMode.XIAOMI,
     val darkMode: DarkMode = DarkMode.SYSTEM,
-    val glassEffect: Boolean = false
+    val glassEffect: Boolean = true
 )
 
 private val Context.appSettingsDataStore: DataStore<Preferences> by preferencesDataStore(
@@ -49,9 +49,9 @@ class ThemeManager(private val context: Context) {
 
     val settings: Flow<AppSettings> = context.appSettingsDataStore.data.map { prefs ->
         AppSettings(
-            themeMode = ThemeMode.fromOrdinal(prefs[Keys.THEME_MODE] ?: 0),
+            themeMode = ThemeMode.fromOrdinal(prefs[Keys.THEME_MODE] ?: 1),
             darkMode = DarkMode.fromOrdinal(prefs[Keys.DARK_MODE] ?: 0),
-            glassEffect = prefs[Keys.GLASS_EFFECT] ?: false
+            glassEffect = prefs[Keys.GLASS_EFFECT] ?: true
         )
     }
 

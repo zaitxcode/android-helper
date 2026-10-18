@@ -59,7 +59,7 @@ fun AppTheme(
 ) {
     val isDark = resolveDarkMode(settings.darkMode)
     val context = LocalContext.current
-    val isGlassActive = settings.themeMode == ThemeMode.XIAOMI && settings.glassEffect
+    val isGlassActive = true
 
     CompositionLocalProvider(LocalGlassEffect provides isGlassActive) {
         when (settings.themeMode) {

@@ -1,5 +1,8 @@
 package com.zaitxcode.android.hardware
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import com.zaitxcode.android.core.AppHelper
 import java.lang.reflect.Method
@@ -21,7 +24,17 @@ object DeviceUI {
         return (Build.DISPLAY ?: "").lowercase(Locale.US)
     }
 
-    // --- Xiaomi / Redmi / POCO ---
+    private fun safelyStartIntent(context: Context, intent: Intent): Boolean {
+        return try {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+            true
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    // --- Xiaomi / Redmi / POCO HyperOS & MIUI ---
 
     @JvmStatic
     fun isHyperOS(): Boolean {
@@ -52,7 +65,62 @@ object DeviceUI {
         return if (miuiVersion.isNotBlank()) "MIUI $miuiVersion" else ""
     }
 
-    // --- Oppo / OnePlus / Realme ---
+    @JvmStatic
+    fun isHyperOSOptimizationEnabled(): Boolean {
+        AppHelper.checkInitialized()
+        val opt = getSystemProperty("persist.sys.miui_optimization")
+        return opt.isBlank() || opt == "1" || opt.equals("true", ignoreCase = true)
+    }
+
+    @JvmStatic
+    fun getHyperOSBuildCode(): String {
+        AppHelper.checkInitialized()
+        return getSystemProperty("ro.miui.ui.version.code")
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun openHyperOSAutostartSettings(context: Context = AppHelper.ctx()): Boolean {
+        AppHelper.checkInitialized()
+        val intent = Intent().apply {
+            component = ComponentName(
+                "com.miui.securitycenter",
+                "com.miui.permcenter.autostart.AutoStartManagementActivity"
+            )
+        }
+        if (safelyStartIntent(context, intent)) return true
+
+        val fallbackIntent = Intent().apply {
+            component = ComponentName(
+                "com.miui.securitycenter",
+                "com.miui.permcenter.autostart.AutoStartActivity"
+            )
+        }
+        return safelyStartIntent(context, fallbackIntent)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun openHyperOSBatterySaverSettings(context: Context = AppHelper.ctx()): Boolean {
+        AppHelper.checkInitialized()
+        val intent = Intent("miui.intent.action.POWER_HIDE_MODE_APP_LIST").apply {
+            putExtra("package_name", context.packageName)
+            putExtra("package_label", context.applicationInfo.loadLabel(context.packageManager).toString())
+        }
+        return safelyStartIntent(context, intent)
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun openHyperOSNotificationSettings(context: Context = AppHelper.ctx()): Boolean {
+        AppHelper.checkInitialized()
+        val intent = Intent("miui.intent.action.NOTIFICATION_APP_LIST").apply {
+            putExtra("package_name", context.packageName)
+        }
+        return safelyStartIntent(context, intent)
+    }
+
+    // --- Oppo / OnePlus / Realme ColorOS ---
 
     @JvmStatic
     fun isColorOS(): Boolean {
@@ -91,7 +159,28 @@ object DeviceUI {
         }
     }
 
-    // --- Samsung ---
+    @JvmStatic
+    @JvmOverloads
+    fun openColorOSAutostartSettings(context: Context = AppHelper.ctx()): Boolean {
+        AppHelper.checkInitialized()
+        val intent = Intent().apply {
+            component = ComponentName(
+                "com.coloros.safecenter",
+                "com.coloros.safecenter.permission.startup.StartupAppListActivity"
+            )
+        }
+        if (safelyStartIntent(context, intent)) return true
+
+        val fallback = Intent().apply {
+            component = ComponentName(
+                "com.oppo.safe",
+                "com.oppo.safe.permission.startup.StartupAppListActivity"
+            )
+        }
+        return safelyStartIntent(context, fallback)
+    }
+
+    // --- Samsung One UI ---
 
     @JvmStatic
     fun isOneUI(): Boolean {
@@ -129,6 +218,19 @@ object DeviceUI {
         }
     }
 
+    @JvmStatic
+    @JvmOverloads
+    fun openOneUIBatteryCareSettings(context: Context = AppHelper.ctx()): Boolean {
+        AppHelper.checkInitialized()
+        val intent = Intent().apply {
+            component = ComponentName(
+                "com.samsung.android.looper",
+                "com.samsung.android.sm.ui.battery.BatteryActivity"
+            )
+        }
+        return safelyStartIntent(context, intent)
+    }
+
     // --- Vivo / iQOO ---
 
     @JvmStatic
@@ -145,6 +247,19 @@ object DeviceUI {
         val osName = getSystemProperty("ro.vivo.os.name").lowercase(Locale.US)
         val osVersion = getSystemProperty("ro.vivo.os.version").lowercase(Locale.US)
         return (osName.contains("funtouch") || osVersion.contains("funtouch")) && !isOriginOS()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun openVivoAutostartSettings(context: Context = AppHelper.ctx()): Boolean {
+        AppHelper.checkInitialized()
+        val intent = Intent().apply {
+            component = ComponentName(
+                "com.iqoo.secure",
+                "com.iqoo.secure.ui.phoneoptimize.BgStartUpManager"
+            )
+        }
+        return safelyStartIntent(context, intent)
     }
 
     // --- Huawei / Honor ---
@@ -169,6 +284,27 @@ object DeviceUI {
         AppHelper.checkInitialized()
         val magic = getSystemProperty("ro.build.version.magic")
         return magic.isNotBlank()
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun openEmuiAutostartSettings(context: Context = AppHelper.ctx()): Boolean {
+        AppHelper.checkInitialized()
+        val intent = Intent().apply {
+            component = ComponentName(
+                "com.huawei.systemmanager",
+                "com.huawei.systemmanager.optimize.process.ProtectActivity"
+            )
+        }
+        if (safelyStartIntent(context, intent)) return true
+
+        val fallback = Intent().apply {
+            component = ComponentName(
+                "com.huawei.systemmanager",
+                "com.huawei.systemmanager.startupmgr.ui.StartupNormalAppListActivity"
+            )
+        }
+        return safelyStartIntent(context, fallback)
     }
 
     // --- Nothing & Motorola & Pixel & Asus & Meizu & ZTE & Lenovo & Sony & Transsion ---
@@ -370,6 +506,22 @@ object DeviceUI {
             isCorvusOS() -> "Corvus OS"
             isDerpFest() -> "DerpFest"
             else -> ""
+        }
+    }
+
+    // --- Master OEM Autostart & Control Resolver ---
+
+    @JvmStatic
+    @JvmOverloads
+    fun openOemAutostartSettings(context: Context = AppHelper.ctx()): Boolean {
+        AppHelper.checkInitialized()
+        return when {
+            isHyperOS() || isMiui() -> openHyperOSAutostartSettings(context)
+            isColorOS() || isOxygenOS() || isRealmeUI() -> openColorOSAutostartSettings(context)
+            isOriginOS() || isFuntouchOS() -> openVivoAutostartSettings(context)
+            isEMUI() || isHarmonyOS() || isMagicOS() -> openEmuiAutostartSettings(context)
+            isOneUI() -> openOneUIBatteryCareSettings(context)
+            else -> false
         }
     }
 
