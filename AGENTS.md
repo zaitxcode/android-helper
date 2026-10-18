@@ -15,7 +15,7 @@ It provides clean, single-purpose helper objects that wrap repetitive
 Android tasks: connectivity checks, vibration and haptics, audio, display info,
 biometric prompts, safe intents, clipboard, notifications, file and storage access,
 device and battery info, time and validation utilities, keyboard control,
-screen-capture blocking, app metadata and signatures, cryptography with C++ NDK acceleration,
+screen-capture blocking, app metadata and signatures, cryptography with C++ NDK & Rust acceleration,
 and native WebBridge for WebView integration.
 
 Public API lives under the `com.zaitxcode.android.*` namespace.
@@ -50,7 +50,7 @@ androidhelper/
 │       ├── gradle-wrapper.jar
 │       └── gradle-wrapper.properties  # Gradle wrapper configuration
 ├── library/                           # Published Android Library Module
-│   ├── build.gradle.kts               # Library build configuration, C++ NDK & Maven publish setup
+│   ├── build.gradle.kts               # Library build configuration, C++ NDK, Rust & Maven publish setup
 │   ├── consumer-rules.pro             # Consumer ProGuard/R8 keep rules (packaged in AAR)
 │   ├── proguard-rules.pro             # Library ProGuard reference rules
 │   └── src/
@@ -58,23 +58,26 @@ androidhelper/
 │       │   ├── AndroidManifest.xml    # Library manifest & FileProvider declaration
 │       │   ├── cpp/                   # Native C++ NDK Engine
 │       │   │   ├── CMakeLists.txt     # CMake build script for libandroidhelper.so
-│       │   │   └── androidhelper.cpp  # C++ JNI implementation (SHA-256, Base64)
+│       │   │   └── androidhelper.cpp  # C++ JNI implementation (SHA-256, Base64, CRC32)
+│       │   ├── rust/                  # Native Rust Crate
+│       │   │   ├── Cargo.toml         # Rust Crate manifest for libandroidhelper_rust.so
+│       │   │   └── src/lib.rs         # Rust JNI implementation (SHA-3, ChaCha20)
 │       │   ├── kotlin/com/zaitxcode/android/
 │       │   │   ├── app/               # AppInfo, AppState, Notification, Permission, Signature
 │       │   │   ├── bridge/            # WebBridge (WebView JavaScript interface)
 │       │   │   ├── browser/           # Browser (Custom Tabs)
 │       │   │   ├── content/           # Clipboard, Intent (Safe Intents)
 │       │   │   ├── core/              # AppHelper (Initialization & Context tracking)
-│       │   │   ├── hardware/          # Audio, Battery, Biometric, Device, Display, Vibration
-│       │   │   ├── io/                # File (Path Traversal Protection), Storage
-│       │   │   ├── net/               # Network (Live Connectivity Observer)
-│       │   │   ├── security/          # Encryption (AES-256, HMAC, Hashes & C++ NDK Fallback)
+│       │   │   ├── hardware/          # Audio, Battery, Biometric, Device, Display, Sensors, Vibration
+│       │   │   ├── io/                # Download, File (Path Traversal Protection), Storage
+│       │   │   ├── net/               # ConnectivityStream, Network (Live Connectivity Observer)
+│       │   │   ├── security/          # CryptoGcm (AES-GCM), Encryption (AES-256, HMAC, Hashes), RustEngine
 │       │   │   ├── util/              # Time, Validation
-│       │   │   └── view/              # Keyboard (WindowInsets), Screen (Capture Blocking)
+│       │   │   └── view/              # Keyboard (WindowInsets), Screen, WindowInsetsHelper
 │       │   └── res/
 │       │       └── xml/
 │       │           └── androidhelper_file_paths.xml  # Safe FileProvider path rules
-│       └── test/kotlin/com/zaitxcode/android/        # Unit Tests (28 passed tests)
+│       └── test/kotlin/com/zaitxcode/android/        # Unit Tests (31 passed tests)
 │           ├── AppInfoTest.kt
 │           ├── AppStateTest.kt
 │           ├── DeviceTest.kt
@@ -82,6 +85,7 @@ androidhelper/
 │           ├── FileTest.kt
 │           ├── HardwareAndContentTest.kt
 │           ├── NetworkTest.kt
+│           ├── NewHelpersTest.kt
 │           ├── TimeTest.kt
 │           └── ValidationTest.kt
 ├── app/                               # Jetpack Compose Demo Application
@@ -89,13 +93,13 @@ androidhelper/
 │   └── src/main/kotlin/com/zaitxcode/android/apps/apphelper/
 │       ├── MainActivity.kt
 │       ├── theme/                     # AppTheme, GlassModifier, ThemeManager
-│       └── ui/                        # HomeScreen (Exercises all 24 helpers), SettingsScreen
+│       └── ui/                        # HomeScreen (Exercises all helpers), SettingsScreen
 ├── java_app/                          # Pure Java & Views Demo Application
 │   ├── build.gradle.kts
 │   └── src/main/java/com/zaitxcode/android/apps/javaapphelper/
 │       └── MainActivity.java          # Full Java Interop Demonstration
 ├── flutter_example/                   # Flutter MethodChannel Demo Application
-│   ├── pubspec.yaml                   # Version 1.0.0
+│   ├── pubspec.yaml
 │   ├── lib/main.dart                  # Flutter UI communicating via MethodChannel
 │   └── android/                       # Native Android host module
 │       └── app/src/main/kotlin/com/zaitxcode/android/apps/flutterapphelper/
@@ -112,15 +116,18 @@ androidhelper/
 
 The following changes have been implemented and verified across the project:
 
-- **Target Java Upgrade to Java 21**: All modules (`library`, `app`, `java_app`) compiled with `JavaVersion.VERSION_21` and JVM Target 21.
-- **Official Stable Release `1.0.0`**: Published to Maven Central (`com.zaitxcode:androidhelper:1.0.0`) with Sonatype Central Portal validation and GPG in-memory signing (`316FC574`).
-- **Dependency Stabilization**: Updated Version Catalog (`libs.versions.toml`) to use latest STABLE dependencies only (`Kotlin 2.4.21`, `AGP 9.4.1`, `Compose BOM 2026.09.00`, `DataStore 1.2.1`, `Activity 1.13.0`, `Biometric 1.1.0`, `Lifecycle 2.11.0`, `Vanniktech Maven Publish 0.37.0`).
-- **API Modernization**: Fully updated all helpers to use SDK 37 / API 35+ non-deprecated APIs (`VibrationEffect` oneshot/waveform, `WindowInsets.Type.ime()`, `AudioDeviceInfo` output devices, `PackageManager.GET_SIGNING_CERTIFICATES`).
-- **Path Traversal Security**: Added canonical path verification (`canonicalPath.startsWith(canonicalDir)`) in `File.kt` to prevent file access outside `context.filesDir`.
-- **Unit Test Suite**: Expanded unit tests in `library/src/test/` to 28 passing unit tests (`28/28 Passed`).
-- **Consumer ProGuard Rules**: Updated `consumer-rules.pro` to keep JNI C++ method signatures while enabling full R8 obfuscation and minification for consumer apps.
-- **R2 Storage & Cloudflare Pages**: Uploaded stable Kotlin Release APK (`android/androidhelper-example-kotlin.apk`) to Cloudflare R2 Remote Bucket `zaitxcode-storage` and deployed the documentation site to Cloudflare Pages (`docs.zaitxcode.com`).
-- **GitHub Releases**: Created official GitHub Releases for all repository tags (`1.0.0` stable, `1.0.0-RC02`, `1.0.0-RC01`, betas, alphas).
+- **Release `1.1.0-alpha01`**: Published to Maven Central (`com.zaitxcode:androidhelper:1.1.0-alpha01`) and tagged on GitHub.
+- **Kotlin 2.5.0-Beta1 & Java 21**: Upgraded to Kotlin `2.5.0-Beta1` and Java 21 toolchain across all Gradle modules.
+- **Native Rust Engine (`libandroidhelper_rust.so`)**: Added Rust crate in `library/src/main/rust/` with `security.RustEngine` for Rust SHA-3 hashing and ChaCha20 encryption.
+- **Native C++ NDK Engine Extensions**: Expanded `androidhelper.cpp` to include native CRC32 hashing.
+- **AES-GCM Cryptography (`security.CryptoGcm`)**: Added AES/GCM/NoPadding encryption with 12-byte random IVs and authentication tags.
+- **Hardware Sensors Manager (`hardware.Sensors`)**: Added helpers for accelerometer, gyroscope, barometer, step counter, and ambient light lux meter.
+- **Download Manager (`io.Download`)**: Added system DownloadManager enqueueing, status polling, and cancellation.
+- **WindowInsets & Edge-to-Edge (`view.WindowInsetsHelper`)**: Added Edge-to-Edge UI enablement and status/navigation bar height DP helpers.
+- **Coroutines Flow Connectivity (`net.ConnectivityStream`)**: Added reactive `Flow<Boolean>` for real-time network state observation in Compose & ViewModel.
+- **WebView Two-Way Bridge (`bridge.WebBridge`)**: Added `evaluateJs` and `detach` methods for two-way JavaScript communication.
+- **Unit Test Suite**: Expanded unit tests to 31 passing tests (`31/31 Passed`).
+- **Cloudflare Pages & R2 Storage**: Deployed updated docs site to Cloudflare Pages (`docs.zaitxcode.com/androidhelper/`) and uploaded release APK to Cloudflare R2 Remote Bucket `zaitxcode-storage`.
 
 ## Library architecture
 
@@ -128,16 +135,16 @@ The library is organized by **category**, one package per category, one
 `object` per helper:
 
 - `core` — `AppHelper`: initialization, lifecycle tracking, logging entry point
-- `net` — `Network`: live connectivity, active transport, metered state
-- `hardware` — `Audio`, `Battery`, `Biometric`, `Device`, `Display`, `Vibration`
+- `net` — `Network`, `ConnectivityStream`: live connectivity, active transport, Coroutines Flow
+- `hardware` — `Audio`, `Battery`, `Biometric`, `Device`, `Display`, `Sensors`, `Vibration`
 - `content` — `Clipboard`, `Intent`: safe intent routing (WhatsApp, SMS, Dial, Email, Share, Maps)
 - `app` — `AppInfo`, `AppState`, `Notification`, `Permission`, `Signature` (Anti-Tampering)
-- `io` — `File` (Path Traversal Protection), `Storage`
-- `security` — `Encryption`: AES-256, HMAC, Hashes, Base64 & C++ NDK Fallback
+- `io` — `Download`, `File` (Path Traversal Protection), `Storage`
+- `security` — `CryptoGcm` (AES-GCM), `Encryption` (AES-256, HMAC, Hashes, CRC32, C++ NDK), `RustEngine` (Rust SHA-3)
 - `util` — `Time`, `Validation` (Email, Phone, Egyptian ID, Luhn Credit Card, JSON, Hex Color)
-- `view` — `Keyboard` (WindowInsets), `Screen` (Capture Blocking)
+- `view` — `Keyboard` (WindowInsets), `Screen` (Capture Blocking), `WindowInsetsHelper` (Edge-to-Edge)
 - `browser` — `Browser`: Custom Tabs
-- `bridge` — `WebBridge`: WebView JavaScript interface (`window.AndroidHelper`)
+- `bridge` — `WebBridge`: WebView JavaScript interface (`window.AndroidHelper`) with two-way `evaluateJs`
 
 ### Conventions every helper follows
 
@@ -208,6 +215,7 @@ The rule files are kept as documentation and as a safety net:
 - The library ships a `FileProvider` (authority `"${applicationId}.provider"`)
   and its path config; file-sharing helpers depend on it.
 - `Encryption` uses AES-256 and HMAC-SHA256 with C++ NDK acceleration.
+- `RustEngine` provides Rust-native cryptographic operations.
 - The codebase is **English-only**: all identifiers, comments, strings, and
   docs. Keep it that way.
 
