@@ -230,4 +230,24 @@ Java_com_zaitxcode_android_security_Encryption_nativeIsLoaded(
     return JNI_TRUE;
 }
 
+JNIEXPORT jlong JNICALL
+Java_com_zaitxcode_android_security_Encryption_nativeCrc32(
+    JNIEnv* env,
+    jclass /* clazz */,
+    jstring text
+) {
+    if (!text) return 0;
+    const char* str = env->GetStringUTFChars(text, nullptr);
+    uint32_t crc = 0xFFFFFFFF;
+    size_t len = strlen(str);
+    for (size_t i = 0; i < len; ++i) {
+        crc ^= static_cast<uint8_t>(str[i]);
+        for (int j = 0; j < 8; ++j) {
+            crc = (crc >> 1) ^ (0xEDB88320 & (-(crc & 1)));
+        }
+    }
+    env->ReleaseStringUTFChars(text, str);
+    return static_cast<jlong>(~crc);
+}
+
 } // extern "C"

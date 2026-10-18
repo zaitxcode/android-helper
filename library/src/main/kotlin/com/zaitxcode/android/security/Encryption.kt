@@ -47,6 +47,25 @@ object Encryption {
     @Suppress("KotlinJniMissingFunction")
     private external fun nativeBase64Decode(encodedText: String): String
 
+    @JvmStatic
+    @Suppress("KotlinJniMissingFunction")
+    private external fun nativeCrc32(text: String): Long
+
+    @JvmStatic
+    fun crc32(text: String): Long {
+        AppHelper.checkInitialized()
+        if (isNativeLoaded) {
+            try {
+                return nativeCrc32(text)
+            } catch (_: Throwable) {
+                // Fallback
+            }
+        }
+        val checksum = java.util.zip.CRC32()
+        checksum.update(text.toByteArray(Charsets.UTF_8))
+        return checksum.value
+    }
+
     @JvmStatic fun md5(text: String): String {
         AppHelper.checkInitialized()
         return hash(text, "MD5")

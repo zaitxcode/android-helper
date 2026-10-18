@@ -31,6 +31,36 @@ object WebBridge {
         webView.addJavascriptInterface(InterfaceHandler(), interfaceName)
     }
 
+    @JvmStatic
+    @JvmOverloads
+    fun detach(webView: WebView, interfaceName: String = DEFAULT_BRIDGE_NAME) {
+        AppHelper.checkInitialized()
+        try {
+            webView.removeJavascriptInterface(interfaceName)
+        } catch (_: Exception) {
+            // Guard
+        }
+    }
+
+    @JvmStatic
+    @JvmOverloads
+    fun evaluateJs(
+        webView: WebView,
+        script: String,
+        callback: ((String?) -> Unit)? = null
+    ) {
+        AppHelper.checkInitialized()
+        try {
+            webView.post {
+                webView.evaluateJavascript(script) { result ->
+                    callback?.invoke(result)
+                }
+            }
+        } catch (_: Exception) {
+            callback?.invoke(null)
+        }
+    }
+
     class InterfaceHandler {
 
         @JavascriptInterface
