@@ -69,7 +69,7 @@ androidhelper/
 │       │   │   ├── browser/           # Browser (Custom Tabs)
 │       │   │   ├── content/           # Clipboard, Intent (Safe Intents)
 │       │   │   ├── core/              # AppHelper (Initialization & Context tracking)
-│       │   │   ├── hardware/          # Audio, Battery, Biometric, Device, Display, Sensors, Vibration
+│       │   │   ├── hardware/          # Audio, Battery, Biometric, Device, DeviceUI (OEM Skins & Custom ROMs), Display, Sensors, Vibration
 │       │   │   ├── io/                # Download, File (Path Traversal Protection), Storage
 │       │   │   ├── net/               # ConnectivityStream, Network (Live Connectivity Observer)
 │       │   │   ├── security/          # CryptoGcm (AES-GCM), Encryption (AES-256, HMAC, Hashes), RustEngine
