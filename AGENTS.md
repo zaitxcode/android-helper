@@ -2,18 +2,21 @@
 
 Guidance for AI agents working in this repository. Read this first.
 
+> **MANDATORY INSTRUCTION FOR ALL AI AGENTS**:
+> Whenever you modify, add, or remove files, packages, or architectural components in this repository, you **MUST** update the Project Directory Tree and the Change Log sections in this file (`AGENTS.md`) before finishing your task.
+
 ## What this project is
 
 **Android Helper** is a multi-module Android library plus demo applications.
 The library is the product; everything else exists to demonstrate, exercise,
 or publish it.
 
-It provides clean, single-purpose helper objects that wrap the repetitive
-Android tasks app developers write over and over: connectivity checks,
-vibration and haptics, audio, display info, biometric prompts, safe intents,
-clipboard, notifications, file and storage access, device and battery info,
-time and validation utilities, keyboard control, screen-capture blocking,
-app metadata and signatures, and cryptography.
+It provides clean, single-purpose helper objects that wrap repetitive
+Android tasks: connectivity checks, vibration and haptics, audio, display info,
+biometric prompts, safe intents, clipboard, notifications, file and storage access,
+device and battery info, time and validation utilities, keyboard control,
+screen-capture blocking, app metadata and signatures, cryptography with C++ NDK acceleration,
+and native WebBridge for WebView integration.
 
 Public API lives under the `com.zaitxcode.android.*` namespace.
 The codebase is English-only by policy.
@@ -22,10 +25,102 @@ The codebase is English-only by policy.
 
 | Module | Role |
 |---|---|
-| `library` | The actual library. This is what gets published. |
-| `app` | Kotlin demo app (Jetpack Compose). Exercises every helper. |
+| `library` | The actual library. Published to Maven Central (`com.zaitxcode:androidhelper`). |
+| `app` | Kotlin demo app (Jetpack Compose & Miuix Material3). Exercises every helper. |
 | `java_app` | Pure-Java demo app (Views/XML). Proves Java interop. |
-| `flutter_example` | Flutter demo that bridges to the library via a MethodChannel. |
+| `flutter_example` | Flutter demo that bridges to the library via a MethodChannel (`androidhelper/core`). |
+| `packages/web` | Web & TS helper package (`@zaitxcode/web-helper`) for WebBridge integration. |
+| `web_demo` | Standalone interactive HTML/JS WebBridge demo page. |
+
+## Project Directory Tree
+
+```
+androidhelper/
+├── AGENTS.md                          # Guidance and architecture rules for AI agents
+├── PROMPTS.md                         # Reusable prompt templates and agent working agreement
+├── README.md                          # Public repository overview and installation guide
+├── LICENSE                             # Apache-2.0 License & ZaitXCode identity terms
+├── build.gradle.kts                   # Root Gradle build script
+├── settings.gradle.kts                # Root project module definitions
+├── gradle.properties                  # Gradle properties & JVM configurations
+├── jitpack.yml                        # JitPack publication configuration
+├── gradle/
+│   ├── libs.versions.toml             # Central Version Catalog (single source of truth)
+│   └── wrapper/
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties  # Gradle wrapper configuration
+├── library/                           # Published Android Library Module
+│   ├── build.gradle.kts               # Library build configuration, C++ NDK & Maven publish setup
+│   ├── consumer-rules.pro             # Consumer ProGuard/R8 keep rules (packaged in AAR)
+│   ├── proguard-rules.pro             # Library ProGuard reference rules
+│   └── src/
+│       ├── main/
+│       │   ├── AndroidManifest.xml    # Library manifest & FileProvider declaration
+│       │   ├── cpp/                   # Native C++ NDK Engine
+│       │   │   ├── CMakeLists.txt     # CMake build script for libandroidhelper.so
+│       │   │   └── androidhelper.cpp  # C++ JNI implementation (SHA-256, Base64)
+│       │   ├── kotlin/com/zaitxcode/android/
+│       │   │   ├── app/               # AppInfo, AppState, Notification, Permission, Signature
+│       │   │   ├── bridge/            # WebBridge (WebView JavaScript interface)
+│       │   │   ├── browser/           # Browser (Custom Tabs)
+│       │   │   ├── content/           # Clipboard, Intent (Safe Intents)
+│       │   │   ├── core/              # AppHelper (Initialization & Context tracking)
+│       │   │   ├── hardware/          # Audio, Battery, Biometric, Device, Display, Vibration
+│       │   │   ├── io/                # File (Path Traversal Protection), Storage
+│       │   │   ├── net/               # Network (Live Connectivity Observer)
+│       │   │   ├── security/          # Encryption (AES-256, HMAC, Hashes & C++ NDK Fallback)
+│       │   │   ├── util/              # Time, Validation
+│       │   │   └── view/              # Keyboard (WindowInsets), Screen (Capture Blocking)
+│       │   └── res/
+│       │       └── xml/
+│       │           └── androidhelper_file_paths.xml  # Safe FileProvider path rules
+│       └── test/kotlin/com/zaitxcode/android/        # Unit Tests (28 passed tests)
+│           ├── AppInfoTest.kt
+│           ├── AppStateTest.kt
+│           ├── DeviceTest.kt
+│           ├── EncryptionTest.kt
+│           ├── FileTest.kt
+│           ├── HardwareAndContentTest.kt
+│           ├── NetworkTest.kt
+│           ├── TimeTest.kt
+│           └── ValidationTest.kt
+├── app/                               # Jetpack Compose Demo Application
+│   ├── build.gradle.kts
+│   └── src/main/kotlin/com/zaitxcode/android/apps/apphelper/
+│       ├── MainActivity.kt
+│       ├── theme/                     # AppTheme, GlassModifier, ThemeManager
+│       └── ui/                        # HomeScreen (Exercises all 24 helpers), SettingsScreen
+├── java_app/                          # Pure Java & Views Demo Application
+│   ├── build.gradle.kts
+│   └── src/main/java/com/zaitxcode/android/apps/javaapphelper/
+│       └── MainActivity.java          # Full Java Interop Demonstration
+├── flutter_example/                   # Flutter MethodChannel Demo Application
+│   ├── pubspec.yaml                   # Version 1.0.0
+│   ├── lib/main.dart                  # Flutter UI communicating via MethodChannel
+│   └── android/                       # Native Android host module
+│       └── app/src/main/kotlin/com/zaitxcode/android/apps/flutterapphelper/
+│           ├── MainActivity.kt        # MethodChannel handler ("androidhelper/core")
+│           └── MyApp.kt               # Application class initializing AppHelper
+├── packages/web/                      # Web & TS Helper Package (@zaitxcode/web-helper)
+│   ├── package.json
+│   └── src/
+└── web_demo/                          # Interactive Standalone HTML/JS WebBridge Demo
+    └── index.html
+```
+
+## Recent Changes & History Log
+
+The following changes have been implemented and verified across the project:
+
+- **Target Java Upgrade to Java 21**: All modules (`library`, `app`, `java_app`) compiled with `JavaVersion.VERSION_21` and JVM Target 21.
+- **Official Stable Release `1.0.0`**: Published to Maven Central (`com.zaitxcode:androidhelper:1.0.0`) with Sonatype Central Portal validation and GPG in-memory signing (`316FC574`).
+- **Dependency Stabilization**: Updated Version Catalog (`libs.versions.toml`) to use latest STABLE dependencies only (`Kotlin 2.4.21`, `AGP 9.4.1`, `Compose BOM 2026.09.00`, `DataStore 1.2.1`, `Activity 1.13.0`, `Biometric 1.1.0`, `Lifecycle 2.11.0`, `Vanniktech Maven Publish 0.37.0`).
+- **API Modernization**: Fully updated all helpers to use SDK 37 / API 35+ non-deprecated APIs (`VibrationEffect` oneshot/waveform, `WindowInsets.Type.ime()`, `AudioDeviceInfo` output devices, `PackageManager.GET_SIGNING_CERTIFICATES`).
+- **Path Traversal Security**: Added canonical path verification (`canonicalPath.startsWith(canonicalDir)`) in `File.kt` to prevent file access outside `context.filesDir`.
+- **Unit Test Suite**: Expanded unit tests in `library/src/test/` to 28 passing unit tests (`28/28 Passed`).
+- **Consumer ProGuard Rules**: Updated `consumer-rules.pro` to keep JNI C++ method signatures while enabling full R8 obfuscation and minification for consumer apps.
+- **R2 Storage & Cloudflare Pages**: Uploaded stable Kotlin Release APK (`android/androidhelper-example-kotlin.apk`) to Cloudflare R2 Remote Bucket `zaitxcode-storage` and deployed the documentation site to Cloudflare Pages (`docs.zaitxcode.com`).
+- **GitHub Releases**: Created official GitHub Releases for all repository tags (`1.0.0` stable, `1.0.0-RC02`, `1.0.0-RC01`, betas, alphas).
 
 ## Library architecture
 
@@ -33,15 +128,16 @@ The library is organized by **category**, one package per category, one
 `object` per helper:
 
 - `core` — `AppHelper`: initialization, lifecycle tracking, logging entry point
-- `net` — `Network`
+- `net` — `Network`: live connectivity, active transport, metered state
 - `hardware` — `Audio`, `Battery`, `Biometric`, `Device`, `Display`, `Vibration`
-- `content` — `Clipboard`, `Intent`
-- `app` — `AppInfo`, `AppState`, `Notification`, `Permission`, `Signature`
-- `io` — `File`, `Storage`
-- `security` — `Encryption`
-- `util` — `Time`, `Validation`
-- `view` — `Keyboard`, `Screen`
-- `browser` — `Browser`
+- `content` — `Clipboard`, `Intent`: safe intent routing (WhatsApp, SMS, Dial, Email, Share, Maps)
+- `app` — `AppInfo`, `AppState`, `Notification`, `Permission`, `Signature` (Anti-Tampering)
+- `io` — `File` (Path Traversal Protection), `Storage`
+- `security` — `Encryption`: AES-256, HMAC, Hashes, Base64 & C++ NDK Fallback
+- `util` — `Time`, `Validation` (Email, Phone, Egyptian ID, Luhn Credit Card, JSON, Hex Color)
+- `view` — `Keyboard` (WindowInsets), `Screen` (Capture Blocking)
+- `browser` — `Browser`: Custom Tabs
+- `bridge` — `WebBridge`: WebView JavaScript interface (`window.AndroidHelper`)
 
 ### Conventions every helper follows
 
@@ -69,10 +165,10 @@ for Java consumers; the internal `ctx()`/`act()` are library-private.
 
 - Gradle with Kotlin DSL everywhere. Version catalog at `gradle/libs.versions.toml`
   is the single source of truth for versions and SDK levels.
-- Java/Kotlin target is 17. The minimum supported Android SDK is 26.
+- Java/Kotlin target is **Java 21**. The minimum supported Android SDK is 26.
 - Always invoke the wrapper as `bash ./gradlew <task>` — the execute bit is
   unreliable in this environment.
-- The library publishes to JitPack. Only the `library` module is published.
+- The library publishes to Maven Central (`com.zaitxcode:androidhelper`).
 
 ### Environment quirk (important)
 
@@ -97,38 +193,32 @@ The rule files are kept as documentation and as a safety net:
   changes.
 - `library/consumer-rules.pro` is packaged *inside* the AAR and is applied
   automatically to every app that depends on the library. It guarantees that a
-  consumer who enables their own minification never has the API stripped or
-  renamed.
-
-Keep the intent of both files: **keep class names and public members of
-`com.zaitxcode.android.**`; keep the Kotlin `INSTANCE` field of singletons; keep
-`kotlin.Metadata`; keep `androidx.core.content.FileProvider`.**
+  consumer who enables their own minification never loses native JNI bindings.
 
 ## Non-obvious facts and pitfalls
 
 - **Do not commit build output or caches.** `build/`, `.gradle/`, `.kotlin/`,
-  and Flutter's `.dart_tool/` are generated. Keep the tree clean.
+  `.wrangler/`, and Flutter's `.dart_tool/` are generated. Keep the tree clean.
 - **`proguard-rules.pro` must never be gitignored.** Ignoring it silently
   removes the consumer-protection layer from the repository.
 - The `flutter_example` module depends on a **prebuilt `androidhelper.aar`
   committed into the repo** (`android/app/libs/`). It is a deliberate
   dependency artifact, not a cache — do not delete it. Rebuild and refresh it
-  when the library's public API changes with
-  `bash ./gradlew :library:refreshFlutterAar`.
+  when the library's public API changes.
 - The library ships a `FileProvider` (authority `"${applicationId}.provider"`)
   and its path config; file-sharing helpers depend on it.
-- `Encryption` keeps AES-ECB only for backward compatibility. For new sensitive
-  use call `aesGcmEncrypt`/`aesGcmDecrypt` (AES-GCM with random IV and auth tag).
+- `Encryption` uses AES-256 and HMAC-SHA256 with C++ NDK acceleration.
 - The codebase is **English-only**: all identifiers, comments, strings, and
   docs. Keep it that way.
 
 ## Working agreements
 
+- **MANDATORY**: Keep the Project Directory Tree and Change Log in `AGENTS.md` up to date whenever files or architecture changes occur.
 - Keep the category/package structure and the singleton + `@JvmStatic` style.
 - Preserve Java interop: any new public helper must be callable cleanly from
   plain Java.
 - Any new public API must be reflected in the ProGuard keep rules so a
-  consumer who enables minification cannot strip it.
+  consumer who enables minification cannot strip JNI bindings.
 - Keep modules self-consistent: a change to the library's public API may
   require updating `app`, `java_app`, `flutter_example`, and the bundled AAR.
 - Prefer editing existing files over adding scratch or staging files.

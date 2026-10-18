@@ -52,6 +52,11 @@ Before executing anything, follow these rules:
   (version catalog, jitpack.yml, pubspec.yaml, build files, README).
 - Never leave a mix of old and new versions.
 
+[DOCUMENTATION & AGENTS.MD]
+- MANDATORY: Always update the Project Directory Tree and Change Log in AGENTS.md
+  whenever you create, move, or delete files, or when architectural changes occur.
+- Keep AGENTS.md as the living single source of truth for repository state and structure.
+
 [PUBLISHING]
 - A release means three things together: commit + tag + GitHub Release.
 ```
