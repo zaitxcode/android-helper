@@ -1,6 +1,7 @@
 package com.zaitxcode.android
 
 import com.zaitxcode.android.core.AppHelper
+import com.zaitxcode.android.hardware.DeviceUI
 import com.zaitxcode.android.security.CryptoGcm
 import com.zaitxcode.android.security.Encryption
 import com.zaitxcode.android.security.RustEngine
@@ -44,5 +45,29 @@ class NewHelpersTest {
         val hash = RustEngine.sha3(text)
         assertNotNull(hash)
         assertTrue(hash.isNotBlank())
+    }
+
+    @Test
+    fun testDeviceUI() {
+        assertNotNull(DeviceUI.getOemSkinName())
+        assertNotNull(DeviceUI.isHyperOS())
+        assertNotNull(DeviceUI.isMiui())
+        assertNotNull(DeviceUI.isColorOS())
+        assertNotNull(DeviceUI.isOxygenOS())
+        assertNotNull(DeviceUI.isRealmeUI())
+        assertNotNull(DeviceUI.isOneUI())
+        assertNotNull(DeviceUI.isOriginOS())
+        assertNotNull(DeviceUI.isFuntouchOS())
+        assertNotNull(DeviceUI.isEMUI())
+        assertNotNull(DeviceUI.isHarmonyOS())
+        assertNotNull(DeviceUI.isMagicOS())
+        assertNotNull(DeviceUI.isNothingOS())
+        assertNotNull(DeviceUI.isFlyme())
+        assertNotNull(DeviceUI.isLineageOS())
+        assertNotNull(DeviceUI.isPixelExperience())
+        assertNotNull(DeviceUI.isGrapheneOS())
+        assertNotNull(DeviceUI.isCalyxOS())
+        assertNotNull(DeviceUI.isCrDroid())
+        assertNotNull(DeviceUI.isCustomRom())
     }
 }
