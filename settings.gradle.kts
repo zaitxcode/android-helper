@@ -23,3 +23,5 @@ rootProject.name = "androidhelper"
 include(":library")
 include(":app")
 include(":java_app")
+include(":expo_app")
+project(":expo_app").projectDir = file("expo_example/android/app")
