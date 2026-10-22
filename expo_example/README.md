@@ -1,6 +1,6 @@
 # Android Helper Expo & React Native Integration Example
 
-This example demonstrates how to integrate the **Android Helper** library (v1.1.0-alpha01) into a **React Native / Expo** application using a native Kotlin `ReactContextBaseJavaModule` bridge (`AndroidHelperModule.kt`).
+This example demonstrates how to integrate the **Android Helper** library (v1.1.0-alpha02) into a **React Native / Expo** application using a native Kotlin `ReactContextBaseJavaModule` bridge (`AndroidHelperModule.kt`).
 
 ---
 

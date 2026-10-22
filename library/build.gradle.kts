@@ -66,7 +66,7 @@ group = "com.zaitxcode"
 val keyFile = rootProject.file(".gradle/gpg_key.asc")
 val signingKey = if (keyFile.exists()) keyFile.readText() else ((project.findProperty("signingKey") as? String)
     ?: (project.findProperty("signingInMemoryKey") as? String))
-val signingKeyId = if (keyFile.exists()) "316FC574" else ((project.findProperty("signingKeyId") as? String)
+val signingKeyId = if (keyFile.exists()) "18A7EB1880C9F89E" else ((project.findProperty("signingKeyId") as? String)
     ?: (project.findProperty("signing.keyId") as? String))
 val signingPassword = (project.findProperty("signingPassword") as? String)
     ?: (project.findProperty("signing.password") as? String)

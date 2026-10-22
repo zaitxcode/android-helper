@@ -122,6 +122,7 @@ androidhelper/
 
 The following changes have been implemented and verified across the project:
 
+- **Release `1.1.0-alpha02`**: Published to Maven Central (`com.zaitxcode:androidhelper:1.1.0-alpha02`). Workflow updated to JDK 21 + tag pattern `1.*`. ProGuard/R8 rules reduced to JNI-only protection (`native <methods>` + `FileProvider`); full public-surface keep rules removed so consumers' R8 can freely shrink and rename non-JNI classes.
 - **Release `1.1.0-alpha01`**: Published to Maven Central (`com.zaitxcode:androidhelper:1.1.0-alpha01`) and tagged on GitHub.
 - **Android-Only Library Scope**: Removed legacy web packages (`packages/web` and `web_demo`) to focus strictly on Android native runtime and cross-platform Android framework bridges (Flutter, Expo / React Native, Java, Kotlin, Rust).
 - **Expo & React Native Integration (`expo_example`)**: Added full Expo 52 / React Native 0.76 demo module with native Kotlin `ReactContextBaseJavaModule` (`AndroidHelperModule.kt`).

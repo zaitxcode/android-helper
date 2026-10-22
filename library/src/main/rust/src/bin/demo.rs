@@ -4,7 +4,7 @@ fn main() {
     println!("🦀 Android Helper - Native Rust Engine Interactive Demo");
     println!("---------------------------------------------------");
 
-    let input = "Hello Rust Engine in Android Helper 1.1.0-alpha01";
+    let input = "Hello Rust Engine in Android Helper 1.1.0-alpha02";
     println!("Input Text: {}", input);
 
     let mut hasher = Sha3_256::new();

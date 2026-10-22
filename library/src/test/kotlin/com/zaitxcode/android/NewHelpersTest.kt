@@ -34,7 +34,7 @@ class NewHelpersTest {
 
     @Test
     fun testCrc32() {
-        val input = "Hello Android Helper 1.1.0-alpha01"
+        val input = "Hello Android Helper 1.1.0-alpha02"
         val crc = Encryption.crc32(input)
         assertTrue(crc != 0L)
     }

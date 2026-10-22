@@ -539,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void testNewHelpers() {
-        appendOutput("\n=== New Helpers 1.1.0-alpha01 ===");
+        appendOutput("\n=== New Helpers 1.1.0-alpha02 ===");
         appendOutput("OEM Skin: " + com.zaitxcode.android.hardware.DeviceUI.getOemSkinName());
         appendOutput("Is HyperOS: " + com.zaitxcode.android.hardware.DeviceUI.isHyperOS());
         appendOutput("Is ColorOS: " + com.zaitxcode.android.hardware.DeviceUI.isColorOS());

@@ -74,7 +74,7 @@ export default function App() {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>Android Helper 🚀</Text>
-        <Text style={styles.subtitle}>React Native & Expo Integration Demo (v1.1.0-alpha01)</Text>
+        <Text style={styles.subtitle}>React Native & Expo Integration Demo (v1.1.0-alpha02)</Text>
 
         <View style={styles.card}>
           <Text style={styles.cardTitle}>📱 Device Info</Text>
